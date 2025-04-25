@@ -47,6 +47,25 @@ pipeline{
                 }
             }
         }
+        stage("Deploy Aplicação PM2"){
+            steps {
+                script """
+                    ssh deploy-server '
+                        # Navegar ate a pasta do projeto
+                        cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend
+
+                        # Instalar as Dependencias
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+
+                        # Faz o build
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+
+                        # Faz o start e restart do PM2
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+                    '
+                """
+            }
+        }
     }
     post{
         always{
