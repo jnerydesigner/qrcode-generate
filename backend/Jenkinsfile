@@ -44,6 +44,7 @@ pipeline{
                     sh """
                         docker run -d \
                             --name ${containerName} \
+                            --env-file .env \
                             -p 4545:4545 \
                             ${imageNameLatest}
                     """
