@@ -35,6 +35,18 @@ pipeline{
                 }
             }
         }
+
+        stage("Verificar Ambiente e Suas Dependencias"){
+            steps {
+                 script {
+                    sh 'echo $PATH' // Verifica o PATH
+                    sh 'which node' // Verifica o caminho do node
+                    sh 'which pm2' // Verifica o caminho do pm2
+                    sh 'which npm' // Verifica o caminho do npm
+                    sh 'which yarn' // Verifica o caminho do npm
+                }
+            }
+        }
     }
     post{
         always{
