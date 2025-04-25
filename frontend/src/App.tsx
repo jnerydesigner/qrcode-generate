@@ -8,7 +8,9 @@ function App() {
   const [image, setImage] = useState<string>();
 
   const handleGenerateQrCode = async () => {
-    const response = await axios.post("http://localhost:4545/qrcode", { text });
+    const response = await axios.post("http://191.101.78.119:4545/qrcode", {
+      text,
+    });
     console.log(response);
 
     setImage(response.data.image);
