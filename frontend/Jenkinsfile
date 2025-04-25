@@ -21,10 +21,17 @@ pipeline{
             }
         }
 
-        stage("Instalar as Dependecias do projeto"){
+        stage("Instalar as Dependencias do projeto"){
             steps {
                 script {
                     sh "cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend && yarn install"
+                }
+            }
+        }
+        stage("Rodar o Build do projeto"){
+            steps {
+                script {
+                    sh "cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend && yarn build"
                 }
             }
         }
