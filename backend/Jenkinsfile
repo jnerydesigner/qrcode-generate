@@ -1,9 +1,56 @@
 pipeline{
     agent any
     stages{
-        stage("Navegue ate a pasta"){
+        stage("Navegação ate a Pasta do Projeto"){
             steps{
-                sh 'cd /var/lib/jenkins/workspace/BackendQRCodeGenerate'
+                script {
+                    sh "cd /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend"
+                }
+            }
+        }
+
+        stage("Build Image Docker"){
+            steps {
+                script {
+                    def imageName = "jandernery/qrcode-generate:v1"
+                    def imageNameLatest = "jandernery/qrcode-generate:latest"
+
+                    docker.build(imageName, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
+                    docker.build(imageNameLatest, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
+                }
+            }
+        }
+
+        stage("Docker Push"){
+            steps{
+                script {
+                    def imageName = 'jandernery/qrcode-generate:v1'
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image(imageName).push()
+                    }
+                }
+            }
+        }
+
+        stage("Docker Run Application"){
+            steps{
+                script {
+                    def imageNameLatest = "jandernery/qrcode-generate:latest"
+                    def containerName = "qrcode-generate" 
+                    
+                    sh "docker rm -f ${containerName} || true" 
+
+
+                    sh """
+
+
+                        docker run -d \
+                            --name ${containerName} \
+                            --env-file /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend/.env \
+                            -p 4545:4545 \
+                            ${imageNameLatest}
+                    """
+                }
             }
         }
     }
