@@ -1,20 +1,9 @@
 pipeline{
     agent any
     stages{
-        stage("A"){
+        stage("Navegue ate a pasta"){
             steps{
-                echo "========executing A========"
-            }
-            post{
-                always{
-                    echo "========always========"
-                }
-                success{
-                    echo "========A executed successfully========"
-                }
-                failure{
-                    echo "========A execution failed========"
-                }
+                sh 'cd /var/lib/jenkins/workspace/BackendQRCodeGenerate'
             }
         }
     }
