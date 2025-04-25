@@ -4,11 +4,19 @@ pipeline{
         nodejs 'NodeJS_22'
     }
     stages {
-        stage("Checar a Versão do NodeJS"){
+        stage("Checar a Versão do NodeJS "){
             steps {
                 script {
                     def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
                     echo "NodeJS version: ${nodeVersion}"
+                }
+            }
+        }
+        stage("Checar a Versão do Yarn"){
+            steps {
+                script {
+                    def yarnVersion = sh(script: 'yarn -v', returnStdout: true).trim()
+                    echo "Yarn version: ${yarnVersion}"
                 }
             }
         }
