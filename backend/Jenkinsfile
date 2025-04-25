@@ -3,7 +3,21 @@ pipeline{
     stages{
         stage("Navegação ate a Pasta do Projeto"){
             steps{
-                sh "cd /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend"
+                script {
+                    sh "cd /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend"
+                }
+            }
+        }
+
+        stage("Build Image Docker"){
+            steps {
+                script {
+                    def imageName = "jandernery/qrcode-generate:v1"
+                    def imageNameLatest = "jandernery/qrcode-generate:latest"
+
+                    docker.build(imageName, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
+                    docker.build(imageNameLatest, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
+                }
             }
         }
     }
