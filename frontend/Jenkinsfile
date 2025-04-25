@@ -5,9 +5,11 @@ pipeline{
     }
     stages {
         stage("Checar a Versão do NodeJS"){
-            script {
-                def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
-                echo "NodeJS version: ${nodeVersion}"
+            steps {
+                script {
+                    def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
+                    echo "NodeJS version: ${nodeVersion}"
+                }
             }
         }
     }
