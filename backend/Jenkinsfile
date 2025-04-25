@@ -35,7 +35,7 @@ pipeline{
         stage("Docker Run Application"){
             steps{
                 script {
-                    def containername = "qrcode-generate"
+                    def containername = "jandernery/qrcode-generate"
                     def imageNameLatest = "jandernery/qrcode-generate:latest"
                     
                     sh "docker rm -f ${imageNameLatest} || true" 
