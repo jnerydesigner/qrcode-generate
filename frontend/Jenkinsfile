@@ -1,20 +1,13 @@
 pipeline{
     agent any
-    stages{
-        stage("A"){
-            steps{
-                echo "========executing A========"
-            }
-            post{
-                always{
-                    echo "========always========"
-                }
-                success{
-                    echo "========A executed successfully========"
-                }
-                failure{
-                    echo "========A execution failed========"
-                }
+    tools {
+        nodejs 'NodeJS_22'
+    }
+    stages {
+        stage("Checar a Versão do NodeJS"){
+            script {
+                def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
+                echo "NodeJS version: ${nodeVersion}"
             }
         }
     }
