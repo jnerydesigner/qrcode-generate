@@ -4,7 +4,7 @@ pipeline{
         nodejs 'NodeJS_22'
     }
     stages {
-        stage("Checar a Versão do NodeJS "){
+        stage("Checar a Versão do NodeJS"){
             steps {
                 script {
                     def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
@@ -24,7 +24,7 @@ pipeline{
         stage("Instalar as Dependecias do projeto"){
             steps {
                 script {
-                    sh "yarn install"
+                    sh "cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend && yarn install"
                 }
             }
         }
