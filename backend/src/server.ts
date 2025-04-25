@@ -12,7 +12,7 @@ const qrCodeGenerateService = new QrCodeGenerateService();
 
 app.use(
   cors({
-    origin: "*",
+    origin: process.env.FRONTEND_URL,
     methods: ["POST"],
     allowedHeaders: ["Content-Type"],
   })
