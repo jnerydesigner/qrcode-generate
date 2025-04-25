@@ -42,9 +42,11 @@ pipeline{
 
 
                     sh """
+
+
                         docker run -d \
                             --name ${containerName} \
-                            --env-file .env \
+                            --env-file /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend/.env \
                             -p 4545:4545 \
                             ${imageNameLatest}
                     """
