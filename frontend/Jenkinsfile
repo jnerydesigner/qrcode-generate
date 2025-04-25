@@ -49,7 +49,8 @@ pipeline{
         }
         stage("Deploy Aplicação PM2"){
             steps {
-                script """
+                script {
+                    """
                     ssh deploy-server '
                         # Navegar ate a pasta do projeto
                         cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend
@@ -64,6 +65,7 @@ pipeline{
                         /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
                     '
                 """
+                }
             }
         }
     }
