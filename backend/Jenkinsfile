@@ -44,7 +44,7 @@ pipeline{
 
                     sh """
                         docker run -d \
-                            -n ${containerName} \
+                            --name ${containerName} \
                             -p 4545:4545 \
                             ${imageNameLatest}
                     """
