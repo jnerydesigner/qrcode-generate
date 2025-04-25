@@ -20,6 +20,14 @@ pipeline{
                 }
             }
         }
+
+        stage("Instalar as Dependecias do projeto"){
+            steps {
+                script {
+                    sh "yarn install"
+                }
+            }
+        }
     }
     post{
         always{
