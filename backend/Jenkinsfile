@@ -38,9 +38,8 @@ pipeline{
                     def imageNameLatest = "jandernery/qrcode-generate:latest"
                     def containerName = "qrcode-generate" 
                     
-                    sh "docker rm -f ${imageNameLatest} || true" 
+                    sh "docker rm -f ${containerName} || true" 
 
-                    sh "docker stop ${containerName}"
 
                     sh """
                         docker run -d \
