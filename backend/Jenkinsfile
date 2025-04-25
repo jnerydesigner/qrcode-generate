@@ -20,6 +20,17 @@ pipeline{
                 }
             }
         }
+
+        stage("Docker Push"){
+            steps{
+                script {
+                    def imageName = 'jandernery/qrcode-generate:v1'
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image(imageName).push()
+                    }
+                }
+            }
+        }
     }
     post{
         always{
