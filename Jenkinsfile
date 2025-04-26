@@ -19,6 +19,7 @@ pipeline {
             steps {
                 sh 'node -v'
                 sh 'yarn -v'
+                sh 'pm2 status'
             }
         }
 
@@ -26,6 +27,7 @@ pipeline {
             steps {
                 dir("${env.FRONTEND_PATH}") {
                     sh 'yarn install'
+                    sh 'yarn build'
                 }
             }
         }
