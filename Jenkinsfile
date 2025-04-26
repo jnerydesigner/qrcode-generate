@@ -43,10 +43,10 @@ pipeline{
 
                     sh '''#!/bin/bash
                         docker run -d \
-                        --name qrcode-generate \
+                        --name ${containerName} \
                         --env-file /var/lib/jenkins/workspace/QrCodeGenerate/backend/.env \
                         -p 4545:4545 \
-                        jandernery/qrcode-generate:latest
+                        ${imageNameLatest}
                     '''
                 }
             }
