@@ -27,7 +27,7 @@ pipeline {
             steps {
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn -v'
-                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 status'
+                sh '/root/.nvm/versions/node/v22.15.0/bin/pm2 status'
             }
         }
 
