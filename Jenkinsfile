@@ -4,13 +4,6 @@ pipeline{
         nodejs 'NodeJS_22'
     }
     stages{
-        stage("Navegação ate a Pasta do Projeto"){
-            steps{
-                script {
-                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/backend"
-                }
-            }
-        }
         stage("Build Image Docker"){
             steps {
                 script {
@@ -59,32 +52,24 @@ pipeline{
                 }
             }
         }
-        stage("Checar a Versão do Yarn"){
-            steps {
-                script {
-                    def yarnVersion = sh(script: 'yarn -v', returnStdout: true).trim()
-                    echo "Yarn version: ${yarnVersion}"
-                }
-            }
-        }
         stage("Instalar as Dependencias do projeto"){
             steps {
                 script {
-                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend && yarn install"
+                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend && /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install"
                 }
             }
         }
-        stage("Verificar Ambiente e Suas Dependencias"){
-            steps {
-                 script {
-                    sh 'echo $PATH' // Verifica o PATH
-                    sh 'which node' // Verifica o caminho do node
-                    sh 'which pm2' // Verifica o caminho do pm2
-                    sh 'which npm' // Verifica o caminho do npm
-                    sh 'which yarn' // Verifica o caminho do npm
-                }
-            }
-        }
+        // stage("Verificar Ambiente e Suas Dependencias"){
+        //     steps {
+        //          script {
+        //             sh 'echo $PATH' // Verifica o PATH
+        //             sh 'which node' // Verifica o caminho do node
+        //             sh 'which pm2' // Verifica o caminho do pm2
+        //             sh 'which npm' // Verifica o caminho do npm
+        //             sh 'which yarn' // Verifica o caminho do npm
+        //         }
+        //     }
+        // }
         stage("Deploy Aplicação PM2"){
             steps {
                 script {
@@ -108,9 +93,6 @@ pipeline{
         }
     }
     post{
-        always{
-            echo "========always========"
-        }
         success{
             echo "========pipeline executed successfully ========"
         }
