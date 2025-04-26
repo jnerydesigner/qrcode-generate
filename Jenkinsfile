@@ -15,11 +15,19 @@ pipeline {
 
     stages {
 
-        stage("Verificar versões") {
+        stage("Verificar Instalações") {
             steps {
                 sh 'which node'
                 sh 'which yarn'
                 sh 'which pm2'
+            }
+        }
+
+        stage("Verificar versões e PM2 Status") {
+            steps {
+                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
+                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn -v'
+                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 status'
             }
         }
 
