@@ -41,13 +41,13 @@ pipeline{
                     sh "docker rm -f ${containerName} || true" 
 
 
-                    sh '''#!/bin/bash
-                        docker run -d \
-                        --name ${containerName} \
-                        --env-file=/var/lib/jenkins/workspace/QrCodeGenerate/backend/.env \
-                        -p 4545:4545 \
+                    sh """#!/bin/bash
+                        docker run -d \\
+                        --name ${containerName} \\
+                        --env-file=/var/lib/jenkins/workspace/QrCodeGenerate/backend/.env \\
+                        -p 4545:4545 \\
                         ${imageNameLatest}
-                    '''
+                    """
                 }
             }
         }
