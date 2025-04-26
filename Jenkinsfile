@@ -41,8 +41,9 @@ pipeline {
 
 
                             # Instala dependências
-                            yarn install
-                            yarn build
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+
 
                             /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 delete ${env.APPLICATION_NAME}
 
