@@ -19,7 +19,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-200 to-gray-50 flex justify-center items-center px-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 max-w-lg w-full text-center">
-        <h1>Gerador de QrCode</h1>
+        <h1>🇧🇷 Gerador de QrCode</h1>
         <input
           type="text"
           className="border border-gray-300 rounded-lg p-3 w-full 
