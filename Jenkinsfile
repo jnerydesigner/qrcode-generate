@@ -56,88 +56,41 @@ pipeline {
             }
         }
 
-        // stage("Instalar dependências Frontend") {
-        //     steps {
-        //         dir("${env.FRONTEND_PATH}") {
-        //             sh '''
-        //                 sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-        //             '''
-        //         }
-        //     }   
-        // }
 
-        // stage("Instalar dependências Frontend") {
-        //     steps {
-        //         dir("${env.FRONTEND_PATH}") {
-        //             sh '''
-        //                 sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 update
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-        //             '''
-        //         }
-        //     }
-        // }
+        stage("Build Docker Backend") {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:${TAG_VERSION}", "${env.BACKEND_PATH}")
+                    docker.build("${IMAGE_NAME}:latest", "${env.BACKEND_PATH}")
+                }
+            }
+        }
 
+        stage("Push Docker Image") {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image("${IMAGE_NAME}:${TAG_VERSION}").push()
+                    }
+                }
+            }
+        }
 
-        // stage("Build Docker Backend") {
-        //     steps {
-        //         script {
-        //             docker.build("${IMAGE_NAME}:${TAG_VERSION}", "${env.BACKEND_PATH}")
-        //             docker.build("${IMAGE_NAME}:latest", "${env.BACKEND_PATH}")
-        //         }
-        //     }
-        // }
+        stage("Run Backend com Docker") {
+            steps {
+                script {
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
+                    sh """
+                        docker run -d \\
+                        --name ${CONTAINER_NAME} \\
+                        --env-file=${BACKEND_PATH}/.env \\
+                        -p 4545:4545 \\
+                        ${IMAGE_NAME}:latest
+                    """
+                }
+            }
+        }
 
-        // stage("Push Docker Image") {
-        //     steps {
-        //         script {
-        //             docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-        //                 docker.image("${IMAGE_NAME}:${TAG_VERSION}").push()
-        //             }
-        //         }
-        //     }
-        // }
-
-        // stage("Run Backend com Docker") {
-        //     steps {
-        //         script {
-        //             sh "docker rm -f ${CONTAINER_NAME} || true"
-        //             sh """
-        //                 docker run -d \\
-        //                 --name ${CONTAINER_NAME} \\
-        //                 --env-file=${BACKEND_PATH}/.env \\
-        //                 -p 4545:4545 \\
-        //                 ${IMAGE_NAME}:latest
-        //             """
-        //         }
-        //     }
-        // }
-
-        // stage('Deploy com PM2') {
-        //     steps {
-        //         script {
-        //             sh """
-        //             ssh deploy-server '
-        //                 # Navega para o diretório do projeto
-        //                 cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
-
-
-        //                 # Instala dependências
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-
-        //                 # Inicia ou reinicia o processo PM2
-        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs --update-env || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-        //             '
-        //             """
-        //         }
-        //     }
-        // }
     }
 
     post {
