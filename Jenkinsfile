@@ -39,7 +39,7 @@ pipeline {
                             yarn install
                             yarn build
 
-                            pm2 update generated-qrcode || true
+                            pm2 delete generated-qrcode || true
                             pm2 start ecosystem.config.cjs --update-env || pm2 restart ecosystem.config.cjs
 '
 
