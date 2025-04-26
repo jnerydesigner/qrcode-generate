@@ -1,6 +1,6 @@
 pipeline{
     agent any
-     tools {
+    tools {
         nodejs 'NodeJS_22'
     }
     stages{
@@ -22,7 +22,7 @@ pipeline{
                 }
             }
         }
-         stage("Docker Push"){
+        stage("Docker Push"){
             steps{
                 script {
                     def imageName = 'jandernery/qrcode-generate:v2'
@@ -59,7 +59,7 @@ pipeline{
                 }
             }
         }
-         stage("Checar a Versão do Yarn"){
+        stage("Checar a Versão do Yarn"){
             steps {
                 script {
                     def yarnVersion = sh(script: 'yarn -v', returnStdout: true).trim()
@@ -67,7 +67,7 @@ pipeline{
                 }
             }
         }
-         stage("Instalar as Dependencias do projeto"){
+        stage("Instalar as Dependencias do projeto"){
             steps {
                 script {
                     sh "cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend && yarn install"
@@ -88,7 +88,7 @@ pipeline{
         stage("Deploy Aplicação PM2"){
             steps {
                 script {
-                    sh """
+                    sh '''#!/bin/bash
                         ssh deploy-server '
                             # Navegar ate a pasta do projeto
                             cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend
@@ -102,7 +102,7 @@ pipeline{
                             # Faz o start e restart do PM2
                             /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
                         '
-                    """
+                    '''
                 }
             }
         }
