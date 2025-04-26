@@ -32,7 +32,7 @@ function App() {
           onClick={handleGenerateQrCode}
           className="mt-4 w-full bg-gray-400 rounded-md p-2 cursor-pointer text-white font-bold hover:bg-gray-500 transition duration-300"
         >
-          Gerar QrCode
+          Gerar QrCode Se Liga Dev
         </button>
 
         {image && (
