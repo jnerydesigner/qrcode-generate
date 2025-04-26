@@ -17,9 +17,9 @@ pipeline {
 
         stage("Verificar versões") {
             steps {
-                sh 'node -v'
-                sh 'yarn -v'
-                sh 'pm2 status'
+                sh 'which node'
+                sh 'which yarn'
+                sh 'which pm2'
             }
         }
 
