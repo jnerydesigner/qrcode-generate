@@ -46,7 +46,7 @@ function App() {
             <a
               href={image}
               download={`${uuidv4()}.png`}
-              className="mt-4 w-full bg-gray-400 rounded-md p-2 cursor-pointer text-white font-bold hover:bg-gray-500 transition duration-300 flex justify-center items-center gap-6"
+              className="mt-4 w-full bg-gray-400 rounded-md p-2 cursor-pointer text-white font-bold hover:bg-gray-500 transition duration-300 flex justify-center items-center gap-6 shadow-2xl"
             >
               <PiDownloadSimpleFill className="w-[30px] h-[30px]" />{" "}
               <h3>Baixar QRCode</h3>
