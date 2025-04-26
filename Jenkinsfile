@@ -27,15 +27,15 @@ pipeline {
             steps {
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn -v'
-                sh '/root/.nvm/versions/node/v22.15.0/bin/pm2 status'
+                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 status'
             }
         }
 
         stage("Instalar dependências Frontend") {
             steps {
                 dir("${env.FRONTEND_PATH}") {
-                    sh 'yarn install'
-                    sh 'yarn build'
+                    sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install'
+                    sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build'
                 }
             }
         }
@@ -74,34 +74,26 @@ pipeline {
             }
         }
 
-        stage("Build e Deploy Frontend via PM2") {
-            steps {
-                script {
-                    sh """
-                        ssh deploy-server '
-                        export NVM_DIR="$HOME/.nvm"
-                        source "$NVM_DIR/nvm.sh"
-                        nvm use v22.15.0
+//         stage("Build e Deploy Frontend via PM2") {
+//             steps {
+//                 script {
+//                     sh """
 
-                        # Verifica versão do node
-                        node -v
-                        yarn -v
+//                         # Vai pro projeto
+//                         cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
-                        # Vai pro projeto
-                        cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
+//                         # Instala dependências e builda
+//                         /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+//                         /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
 
-                        # Instala dependências e builda
-                        yarn install
-                        yarn build
-
-                        # PM2 deve estar instalado com "npm install -g pm2" previamente
-                        pm2 update
-                        pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
-'
-                    """
-                }
-            }
-        }
+//                         # PM2 deve estar instalado com "npm install -g pm2" previamente
+//                         pm2 update
+//                         pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
+// '
+//                     """
+//                 }
+//             }
+//         }
     }
 
     post {
