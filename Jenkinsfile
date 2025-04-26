@@ -29,28 +29,26 @@ pipeline {
                 script {
                     sh """
                         ssh deploy-server '
-                            # Navega para o diretório do projeto
+                            # Configura o PATH para usar o Node.js 22 e o Yarn corretos
+                            export PATH=/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin:$PATH
+
+                            # Confirma a versão correta do Node e Yarn
+                            node -v
+                            yarn -v
+
                             cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
+                            # Instala dependências com o Node correto
+                            yarn install
 
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v
+                            # Builda o projeto
+                            yarn build
 
-                            ls -la
+                            # Reinicia PM2
+                            pm2 delete generated-qrcode || true
+                            pm2 start ecosystem.config.cjs --update-env || pm2 restart ecosystem.config.cjs
+'
 
-                            cat ecosystem.config.cjs
-
-
-                            # Instala dependências
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-
-
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 delete ${env.APPLICATION_NAME}
-
-                            # Inicia ou reinicia o processo PM2
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs --update-env || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-
-                        '
                     """
                 }
             }
