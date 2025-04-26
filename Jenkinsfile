@@ -7,7 +7,7 @@ pipeline{
         stage("Navegação ate a Pasta do Projeto"){
             steps{
                 script {
-                    sh "cd /var/lib/jenkins/workspace/BackendQRCodeGenerate/backend"
+                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/backend"
                 }
             }
         }
@@ -17,8 +17,8 @@ pipeline{
                     def imageName = "jandernery/qrcode-generate:v2"
                     def imageNameLatest = "jandernery/qrcode-generate:latest"
 
-                    docker.build(imageName, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
-                    docker.build(imageNameLatest, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
+                    docker.build(imageName, '/var/lib/jenkins/workspace/QrCodeGenerate/backend')
+                    docker.build(imageNameLatest, '/var/lib/jenkins/workspace/QrCodeGenerate/backend')
                 }
             }
         }
@@ -70,7 +70,7 @@ pipeline{
         stage("Instalar as Dependencias do projeto"){
             steps {
                 script {
-                    sh "cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend && yarn install"
+                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend && yarn install"
                 }
             }
         }
@@ -91,7 +91,7 @@ pipeline{
                     sh '''#!/bin/bash
                         ssh deploy-server '
                             # Navegar ate a pasta do projeto
-                            cd /var/lib/jenkins/workspace/FrontendQRCodeGenerate/frontend
+                            cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
                             # Instalar as Dependencias
                             /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
