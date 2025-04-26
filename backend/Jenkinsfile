@@ -12,7 +12,7 @@ pipeline{
         stage("Build Image Docker"){
             steps {
                 script {
-                    def imageName = "jandernery/qrcode-generate:v1"
+                    def imageName = "jandernery/qrcode-generate:v2"
                     def imageNameLatest = "jandernery/qrcode-generate:latest"
 
                     docker.build(imageName, '/var/lib/jenkins/workspace/BackendQRCodeGenerate/backend')
@@ -24,7 +24,7 @@ pipeline{
         stage("Docker Push"){
             steps{
                 script {
-                    def imageName = 'jandernery/qrcode-generate:v1'
+                    def imageName = 'jandernery/qrcode-generate:v2'
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         docker.image(imageName).push()
                     }
