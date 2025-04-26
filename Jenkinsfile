@@ -31,6 +31,9 @@ pipeline {
                             # Navega para o diretório do projeto
                             cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
+
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v
+                            
                             ls -la
 
                             cat ecosystem.config.cjs
