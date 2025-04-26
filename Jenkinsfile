@@ -34,12 +34,15 @@ pipeline {
         stage("Instalar dependências Frontend") {
             steps {
                 dir("${env.FRONTEND_PATH}") {
-                    sh 'sudo chmod -R u+w /var/lib/jenkins/workspace/QrCodeGenerate'
-                    sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install'
-                    sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build'
+                    sh '''
+                        sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+                    '''
                 }
             }
         }
+
 
         stage("Build Docker Backend") {
             steps {
