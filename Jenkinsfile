@@ -20,6 +20,7 @@ pipeline {
                 sh 'which yarn'
                 sh 'which pm2'
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
+                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install'
             }
         }
 
