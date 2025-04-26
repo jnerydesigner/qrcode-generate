@@ -42,6 +42,8 @@ pipeline{
 
 
                     sh """
+
+
                         docker run -d \
                             --name ${containerName} \                            
                             --env-file /var/lib/jenkins/workspace/QrCodeGenerate/backend/.env \
