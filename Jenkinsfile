@@ -29,25 +29,17 @@ pipeline {
                 script {
                     sh """
                         ssh deploy-server '
-                            # Configura o PATH para usar o Node.js 22 e o Yarn corretos
                             export PATH=/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin:$PATH
 
-                            # Confirma a versão correta do Node e Yarn
                             node -v
                             yarn -v
 
-
-                            # Vai ate a a pasta
                             cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
-                            # Instala dependências com o Node correto
                             yarn install
-
-                            # Builda o projeto
                             yarn build
 
-                            # Reinicia PM2
-                            pm2 delete generated-qrcode || true
+                            pm2 update generated-qrcode || true
                             pm2 start ecosystem.config.cjs --update-env || pm2 restart ecosystem.config.cjs
 '
 
