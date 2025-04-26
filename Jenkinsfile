@@ -69,12 +69,25 @@ pipeline {
                 script {
                     sh """
                         ssh deploy-server '
-                            cd ${FRONTEND_PATH}
-                            yarn install
-                            yarn build
-                            pm2 update
-                            pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
-                        '
+                        export NVM_DIR="$HOME/.nvm"
+                        source "$NVM_DIR/nvm.sh"
+                        nvm use v22.15.0
+
+                        # Verifica versão do node
+                        node -v
+                        yarn -v
+
+                        # Vai pro projeto
+                        cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
+
+                        # Instala dependências e builda
+                        yarn install
+                        yarn build
+
+                        # PM2 deve estar instalado com "npm install -g pm2" previamente
+                        pm2 update
+                        pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
+'
                     """
                 }
             }
