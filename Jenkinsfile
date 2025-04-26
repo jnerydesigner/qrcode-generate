@@ -1,102 +1,91 @@
-pipeline{
+pipeline {
     agent any
-    tools {
-        nodejs 'NodeJS_22'
-    }
-    stages{
-        stage("Build Image Docker"){
-            steps {
-                script {
-                    def imageName = "jandernery/qrcode-generate:v2"
-                    def imageNameLatest = "jandernery/qrcode-generate:latest"
 
-                    docker.build(imageName, '/var/lib/jenkins/workspace/QrCodeGenerate/backend')
-                    docker.build(imageNameLatest, '/var/lib/jenkins/workspace/QrCodeGenerate/backend')
+    tools {
+        nodejs 'NodeJS_22' // Garante uso do Node 22 para todo o pipeline
+    }
+
+    environment {
+        FRONTEND_PATH = '/var/lib/jenkins/workspace/QrCodeGenerate/frontend'
+        BACKEND_PATH = '/var/lib/jenkins/workspace/QrCodeGenerate/backend'
+        IMAGE_NAME = 'jandernery/qrcode-generate'
+        TAG_VERSION = 'v2'
+        CONTAINER_NAME = 'qrcode-generate'
+    }
+
+    stages {
+
+        stage("Verificar versões") {
+            steps {
+                sh 'node -v'
+                sh 'yarn -v'
+            }
+        }
+
+        stage("Instalar dependências Frontend") {
+            steps {
+                dir("${env.FRONTEND_PATH}") {
+                    sh 'yarn install'
                 }
             }
         }
-        stage("Docker Push"){
-            steps{
+
+        stage("Build Docker Backend") {
+            steps {
                 script {
-                    def imageName = 'jandernery/qrcode-generate:v2'
+                    docker.build("${IMAGE_NAME}:${TAG_VERSION}", "${env.BACKEND_PATH}")
+                    docker.build("${IMAGE_NAME}:latest", "${env.BACKEND_PATH}")
+                }
+            }
+        }
+
+        stage("Push Docker Image") {
+            steps {
+                script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        docker.image(imageName).push()
+                        docker.image("${IMAGE_NAME}:${TAG_VERSION}").push()
                     }
                 }
             }
         }
-        stage("Docker Run Application"){
-            steps{
+
+        stage("Run Backend com Docker") {
+            steps {
                 script {
-                    def imageNameLatest = "jandernery/qrcode-generate:latest"
-                    def containerName = "qrcode-generate" 
-                    
-                    sh "docker rm -f ${containerName} || true" 
-
-
-                    sh """#!/bin/bash
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
+                    sh """
                         docker run -d \\
-                        --name ${containerName} \\
-                        --env-file=/var/lib/jenkins/workspace/QrCodeGenerate/backend/.env \\
+                        --name ${CONTAINER_NAME} \\
+                        --env-file=${BACKEND_PATH}/.env \\
                         -p 4545:4545 \\
-                        ${imageNameLatest}
+                        ${IMAGE_NAME}:latest
                     """
                 }
             }
         }
-        stage("Checar a Versão do NodeJS"){
+
+        stage("Build e Deploy Frontend via PM2") {
             steps {
                 script {
-                    def nodeVersion = sh(script: 'node -v', returnStdout: true).trim()
-                    echo "NodeJS version: ${nodeVersion}"
-                }
-            }
-        }
-        stage("Instalar as Dependencias do projeto"){
-            steps {
-                script {
-                    sh "cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend && /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install"
-                }
-            }
-        }
-        // stage("Verificar Ambiente e Suas Dependencias"){
-        //     steps {
-        //          script {
-        //             sh 'echo $PATH' // Verifica o PATH
-        //             sh 'which node' // Verifica o caminho do node
-        //             sh 'which pm2' // Verifica o caminho do pm2
-        //             sh 'which npm' // Verifica o caminho do npm
-        //             sh 'which yarn' // Verifica o caminho do npm
-        //         }
-        //     }
-        // }
-        stage("Deploy Aplicação PM2"){
-            steps {
-                script {
-                    sh '''#!/bin/bash
+                    sh """
                         ssh deploy-server '
-                            # Navegar ate a pasta do projeto
-                            cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
-
-                            # Instalar as Dependencias
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-
-                            # Faz o build
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-
-                            # Faz o start e restart do PM2
-                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+                            cd ${FRONTEND_PATH}
+                            yarn install
+                            yarn build
+                            pm2 update
+                            pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
                         '
-                    '''
+                    """
                 }
             }
         }
     }
-    post{
-        success{
+
+    post {
+        success {
             echo "========pipeline executed successfully ========"
         }
-        failure{
+        failure {
             echo "========pipeline execution failed========"
         }
     }
