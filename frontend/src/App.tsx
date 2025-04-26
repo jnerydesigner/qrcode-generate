@@ -37,7 +37,7 @@ function App() {
 
         {image && (
           <div className="m-6 flex justify-center items-center flex-col">
-            <p className="mb-4">✅ QrCode Gerado com Sucesso</p>
+            <p className="mb-4">✅ QrCode Gerado com Sucesso Belê</p>
             <img
               src={image}
               alt={text}
