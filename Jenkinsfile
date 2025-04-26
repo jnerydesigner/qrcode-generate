@@ -22,18 +22,40 @@ pipeline {
                 sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
             }
         }
-        stage("Instalar dependências Frontend") {
+
+        stage('Deploy com PM2') {
             steps {
-                dir("${env.FRONTEND_PATH}") {
-                    sh '''
-                        sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-                    '''
+                script {
+                    sh """
+                        ssh deploy-server '
+                            # Navega para o diretório do projeto
+                            cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
+
+
+                            # Instala dependências
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+
+                            # Inicia ou reinicia o processo PM2
+                            /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs --update-env || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+                        '
+                    """
                 }
-            }   
+            }
         }
+
+        // stage("Instalar dependências Frontend") {
+        //     steps {
+        //         dir("${env.FRONTEND_PATH}") {
+        //             sh '''
+        //                 sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+        //             '''
+        //         }
+        //     }   
+        // }
 
         // stage("Instalar dependências Frontend") {
         //     steps {
