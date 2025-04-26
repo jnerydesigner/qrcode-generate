@@ -36,6 +36,8 @@ pipeline {
                             node -v
                             yarn -v
 
+
+                            # Vai ate a a pasta
                             cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
                             # Instala dependências com o Node correto
