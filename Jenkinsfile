@@ -11,6 +11,7 @@ pipeline {
         IMAGE_NAME = 'jandernery/qrcode-generate'
         TAG_VERSION = 'v2'
         CONTAINER_NAME = 'qrcode-generate'
+        APPLICATION_NAME = 'generated-qrcode'
     }
 
     stages {
@@ -42,6 +43,8 @@ pipeline {
                             # Instala dependências
                             yarn install
                             yarn build
+
+                            var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 delete ${env.APPLICATION_NAME}
 
                             # Inicia ou reinicia o processo PM2
                             /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs --update-env || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
