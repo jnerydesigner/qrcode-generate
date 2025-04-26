@@ -14,7 +14,6 @@ pipeline {
     }
 
     stages {
-
         stage("Verificar Instalações") {
             steps {
                 sh 'which node'
@@ -23,27 +22,19 @@ pipeline {
             }
         }
 
-        stage("Verificar versões e PM2 Status") {
-            steps {
-                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
-                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn -v'
-                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 status'
-            }
-        }
-
-        stage("Instalar dependências Frontend") {
-            steps {
-                dir("${env.FRONTEND_PATH}") {
-                    sh '''
-                        sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 update
-                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
-                    '''
-                }
-            }
-        }
+        // stage("Instalar dependências Frontend") {
+        //     steps {
+        //         dir("${env.FRONTEND_PATH}") {
+        //             sh '''
+        //                 sudo chown -R jenkins:jenkins /var/lib/jenkins/workspace/QrCodeGenerate
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 update
+        //                 /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+        //             '''
+        //         }
+        //     }
+        // }
 
 
         stage("Build Docker Backend") {
@@ -80,26 +71,26 @@ pipeline {
             }
         }
 
-//         stage("Build e Deploy Frontend via PM2") {
-//             steps {
-//                 script {
-//                     sh """
+        stage('Deploy com PM2') {
+            steps {
+                script {
+                    sh """
+                    ssh deploy-server '
+                        # Navega para o diretório do projeto
+                        cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
-//                         # Vai pro projeto
-//                         cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
-//                         # Instala dependências e builda
-//                         /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
-//                         /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
+                        # Instala dependências
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn install
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/yarn build
 
-//                         # PM2 deve estar instalado com "npm install -g pm2" previamente
-//                         pm2 update
-//                         pm2 start ecosystem.config.cjs || pm2 restart ecosystem.config.cjs
-// '
-//                     """
-//                 }
-//             }
-//         }
+                        # Inicia ou reinicia o processo PM2
+                        /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 start ecosystem.config.cjs --update-env || /var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/pm2 restart ecosystem.config.cjs
+                    '
+                    """
+                }
+            }
+        }
     }
 
     post {
