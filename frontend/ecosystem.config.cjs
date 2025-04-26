@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "generated-qrcode",
-      script: "/var/lib/jenkins/workspace/QrCodeGenerate/frontend/server.js",
+      script: "./server.js",
       instances: 1,
       autorestart: true,
       wait_read: true,
