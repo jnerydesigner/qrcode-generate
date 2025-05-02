@@ -20,33 +20,35 @@ pipeline {
                 sh 'which node'
                 sh 'which yarn'
                 sh 'which pm2'
-                sh '/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin/node -v'
+
             }
         }
 
         stage('Deploy com PM2') {
             steps {
                 script {
-                    sh """
-                        ssh deploy-server '
-                            export PATH=/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin:$PATH
+                    withCredentials([string(credentialsId: 'SSH_PASSWORD', variable: 'SSH_PASSWORD')]) {
+                        sh """
+                            sshpass -p '${SSH_PASSWORD}' ssh -o StrictHostKeyChecking=no 191.101.78.119'
+                                export PATH=/var/lib/jenkins/tools/jenkins.plugins.nodejs.tools.NodeJSInstallation/NodeJS_22/bin:$PATH
 
-                            node -v
-                            yarn -v
+                                node -v
+                                yarn -v
 
-                            cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
+                                cd /var/lib/jenkins/workspace/QrCodeGenerate/frontend
 
-                            yarn install
-                            yarn build
+                                yarn install
+                                yarn build
 
-                            pm2 update generated-qrcode || true
-                            pm2 start ecosystem.config.cjs --update-env || pm2 restart ecosystem.config.cjs
-'
-
-                    """
+                                pm2 update generated-qrcode || true
+                                pm2 start ecosystem.config.cjs --update-env || pm2 restart ecosystem.config.cjs
+                            '
+                        """
+                    }
                 }
             }
         }
+
 
 
         stage("Build Docker Backend") {
